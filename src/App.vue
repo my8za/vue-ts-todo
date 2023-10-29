@@ -33,12 +33,12 @@ import TodoListItem from "./components/TodoListItem.vue";
 const STORAGE_KEY = "vue-todo-ts-v1";
 const storage = {
   // 로컬스토리지에 데이터 저장
-  save(todoItems: any) {
+  save(todoItems: Todo[]) {
     const parsed = JSON.stringify(todoItems);
     localStorage.setItem(STORAGE_KEY, parsed);
   },
   // 로컬스토리지에 저장된 데이터 가져오기
-  fetch() {
+  fetch(): Todo[] {
     const todoItems = localStorage.getItem(STORAGE_KEY) || "[]";
     const data = JSON.parse(todoItems);
     return data;
@@ -84,7 +84,16 @@ export default Vue.extend({
     },
     // fetch api 호출
     fetchTodoItems() {
-      this.todoItems = storage.fetch();
+      this.todoItems = storage.fetch().sort((a, b) => {
+        if (a.content > b.content) {
+          return 1;
+        }
+        if (a.content < b.content) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
     },
     // 투두 완료 상태 체인지(토글)
     toggleTodoStatus(todoItem: Todo, index: number) {
